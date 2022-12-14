@@ -40,6 +40,7 @@ const lightTheme = {
         "headerBackground": "rgb(255, 255, 255)",
         "headerColorText": "rgb(25, 28, 28)",
         "bodyBackground": "rgb(255, 255, 255)",
+        "textColor": "rgb(25, 28, 28)",
         "elevation": {
           "level0": "transparent",
           "level1": "rgb(238, 246, 245)",
@@ -90,6 +91,7 @@ const darkTheme = {
         "headerBackground": "rgb(25, 28, 28)",
         "headerColorText": "rgb(255, 255, 255)",
         "bodyBackground": "rgb(25, 28, 28)",
+        "textColor": "rgb(255, 255, 255)",
         "elevation": {
           "level0": "transparent",
           "level1": "rgb(28, 38, 38)",

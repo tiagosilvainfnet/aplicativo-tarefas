@@ -20,9 +20,15 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator  } from '@react-navigation/stack';
 
+import {
+  pt,
+  registerTranslation,
+} from 'react-native-paper-dates'
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+registerTranslation('pt', pt)
 
 export default function App() {
   const [modeColor, setModeColor] = useState('light');
