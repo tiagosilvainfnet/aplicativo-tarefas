@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { Button, TextInput, Avatar  } from 'react-native-paper';
+import { Button, TextInput, Avatar, useTheme  } from 'react-native-paper';
 import { register } from '../services/auth';
 
 const Register = ({ navigation, route}) => {
+    const theme = useTheme();
+
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -27,7 +29,10 @@ const Register = ({ navigation, route}) => {
         },
     }); 
 
-    return <View style={style.box}>
+    return <View style={{
+                ...style.box,
+                backgroundColor: theme.colors.bodyBackground
+            }}>
                 <Avatar.Image 
                     style={style.avatar}
                     size={150} source={require('../assets/img/logo.png')} />

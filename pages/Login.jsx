@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, TextInput, Avatar  } from 'react-native-paper';
+import { Button, TextInput, Avatar, useTheme  } from 'react-native-paper';
 import { login } from '../services/auth';
 
 const Login = ({ navigation, route}) => {
+    const theme = useTheme();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    return <View style={style.box}>
+    return <View style={{
+                ...style.box,
+                backgroundColor: theme.colors.bodyBackground
+            }}>
                 <Avatar.Image 
                     style={style.avatar}
                     size={150} source={require('../assets/img/logo.png')} />
