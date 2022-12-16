@@ -5,7 +5,7 @@ import { IconButton, Switch } from 'react-native-paper';
 import { Provider as PaperProvider } from 'react-native-paper';
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { isLoggedIn } from './services/auth';
+import { isLoggedIn, reautenticate } from './services/auth';
 import { verifyTheme } from './services/util';
 import { saveStorage } from './services/storage';
 
@@ -13,6 +13,9 @@ import Login from './pages/Login';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
+
+import { initializeApp } from 'firebase/app';
+import { getAnalytics } from "firebase/analytics";
 
 import { darkTheme, lightTheme } from './theme';
 
@@ -25,6 +28,20 @@ import {
   registerTranslation,
 } from 'react-native-paper-dates'
 
+const firebaseConfig = {
+  apiKey: "AIzaSyDodZ2dh2l7qBrckukpXjSHW3a41Y2qC2E",
+  authDomain: "meu-pomodoro-7d0fb.firebaseapp.com",
+  databaseURL: "https://meu-pomodoro-7d0fb-default-rtdb.firebaseio.com",
+  projectId: "meu-pomodoro-7d0fb",
+  storageBucket: "meu-pomodoro-7d0fb.appspot.com",
+  messagingSenderId: "32516519284",
+  appId: "1:32516519284:web:6be5e2d541f16d255b2821",
+  measurementId: "G-P2HEVQJ38C"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const analytics = getAnalytics(firebaseApp);
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -34,9 +51,14 @@ export default function App() {
   const [modeColor, setModeColor] = useState('light');
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
-  useEffect(() => {
-    setUserLoggedIn(isLoggedIn());
+  const initApp = async () => {
+    setUserLoggedIn(await isLoggedIn());
     verifyTheme(setModeColor);
+  }
+
+  useEffect(() => {
+      reautenticate(firebaseApp);
+      initApp();
   }, [])
 
   const changeThemeColor = () => {
@@ -110,22 +132,24 @@ export default function App() {
                   }}  
                   initialParams={{
                     modeColor,
-                    setModeColor
+                    setModeColor,
+                    setUserLoggedIn,
+                    firebaseApp
                   }}
                 />
               </Tab.Navigator> 
               :
               <Stack.Navigator
-                initialRouteName="Register">
+                initialRouteName="Login">
                 <Stack.Screen 
                   name="Login" 
                   component={Login} 
                   options={{
                     headerShown: false
                   }}
-                  
                   initialParams={{
-                    teste: 'Olá mundo'
+                    firebaseApp,
+                    setUserLoggedIn
                   }}
                   />
                 <Stack.Screen 
@@ -133,6 +157,10 @@ export default function App() {
                   component={Register} 
                   options={{
                     headerShown: false
+                  }}
+                  initialParams={{
+                    firebaseApp,
+                    setUserLoggedIn
                   }}/>
               </Stack.Navigator>
 

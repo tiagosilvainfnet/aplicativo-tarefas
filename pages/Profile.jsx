@@ -1,16 +1,35 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { FAB, Button, TextInput, Avatar, Card  } from 'react-native-paper';
-import { updateProfile } from '../services/user';
+import { FAB, Button, TextInput, Avatar, Card, Snackbar } from 'react-native-paper';
+import { getUser, _updateProfile } from '../services/user';
 import { useTheme } from 'react-native-paper';
+import { logout } from '../services/auth';
+import { pickImage } from '../services/image';
 
 const Profile = ({ route }) => {
     const theme = useTheme();
-
+    const [snackBarShow, setSnackBarShow] = useState(false);
+    const [messageSnack, setMessageSnack] = useState("");
+    
     const [email, setEmail] = useState("");
-    const [name, setName] = useState("");
-    const [username, setUsername] = useState("");
-    const [image, setImage] = useState("");
+    const [displayName, setDisplayName] = useState("");
+    const [photoURL, setPhotoURL] = useState("");
+
+    const loadUser = async () => {
+        const user = await getUser();
+        setEmail(user.email)
+        setDisplayName(user.displayName)
+        setPhotoURL(user.photoURL)
+    }
+
+    const uploadPhoto = async () => {
+        const image = await pickImage();
+        setPhotoURL(image);
+    }
+
+    useEffect(() => {
+        loadUser();
+    }, []);
 
 
     return <View style={{
@@ -20,7 +39,7 @@ const Profile = ({ route }) => {
                 <Card style={style.card}>
                     <Avatar.Image 
                         style={style.avatar}
-                        size={150} source={{ uri: 'https://avatars.githubusercontent.com/u/8451789?v=4'}} />
+                        size={150} source={{ uri: photoURL ? photoURL : require('../assets/user.png')}} />
                     <FAB
                         icon="camera"
                         style={{
@@ -35,7 +54,7 @@ const Profile = ({ route }) => {
                             ...style.fab,
                             right: '-12.5%'
                         }}
-                        onPress={() => console.log('Pressed')}
+                        onPress={uploadPhoto}
                     />
                 </Card>
                 <TextInput
@@ -48,22 +67,36 @@ const Profile = ({ route }) => {
                 <TextInput
                     style={style.input}
                     mode="outlined"
-                    label="Usuário"
-                    value={username}
-                    onChangeText={text => setUsername(text)}
-                />
-                <TextInput
-                    style={style.input}
-                    mode="outlined"
                     label="Nome"
-                    value={name}
-                    onChangeText={text => setName(text)}
+                    value={displayName}
+                    onChangeText={text => setDisplayName(text)}
                 />
-                <Button style={style.button} mode="contained" color="primary" onPress={() => updateProfile({})}>Atualizar perfil</Button>
+                <Button style={style.button} mode="contained" color="primary" onPress={async () => {
+                    try{
+                        await _updateProfile(route.params.firebaseApp, {
+                            email,
+                            displayName,
+                            photoURL
+                        })
+                        setMessageSnack("Perfil atualizado com sucesso!")
+                    }catch(err){
+                        setMessageSnack("Erro ao atualizar perfil!")
+                    }
+                    setSnackBarShow(true)
+                }}>Atualizar perfil</Button>
                 <Button style={{
                     ...style.button,
                     backgroundColor: theme.colors.error
-                }} mode="contained" color="error" onPress={() => console.log('Sair')}>Sair</Button>
+                }} mode="contained" color="error" onPress={async () => {
+                    await logout()
+                    route.params.setUserLoggedIn(false);
+                }}>Sair</Button>
+
+                <Snackbar
+                    visible={snackBarShow}
+                    duration={3000}>
+                    {messageSnack}
+                </Snackbar>
             </View>
 }
 

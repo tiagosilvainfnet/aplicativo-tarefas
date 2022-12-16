@@ -6,15 +6,10 @@ import { register } from '../services/auth';
 const Register = ({ navigation, route}) => {
     const theme = useTheme();
 
-    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errors, setErrors] = useState({
-        username: {
-            status: false,
-            msg: ""
-        },
         email: {
             status: false,
             msg: ""
@@ -36,14 +31,6 @@ const Register = ({ navigation, route}) => {
                 <Avatar.Image 
                     style={style.avatar}
                     size={150} source={require('../assets/img/logo.png')} />
-                <TextInput
-                    style={style.input}
-                    mode="outlined"
-                    label="Usuário"
-                    value={username}
-                    error={errors.username.status}
-                    onChangeText={text => setUsername(text)}
-                />
                 <TextInput
                     style={style.input}
                     mode="outlined"
@@ -73,7 +60,14 @@ const Register = ({ navigation, route}) => {
                 />
                 { errors.confirmPassword.status ? <Text style={style.erro}>{errors.confirmPassword.msg}</Text> : <Text></Text> }
                 
-                <Button style={style.button} mode="contained" onPress={() => register(username, email, password, confirmPassword, setErrors)}>Registrar</Button>
+                <Button style={style.button} mode="contained" onPress={async () => {
+                    try{
+                        await register(email, password, confirmPassword, setErrors, route.params.firebaseApp);
+                        route.params.setUserLoggedIn(true);
+                    }catch(err){
+                        alert(err)
+                    }
+                }}>Registrar</Button>
                 <Button style={style.button} onPress={() => navigation.navigate('Login')}>Entrar</Button>
             </View>
 }

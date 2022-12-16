@@ -31,7 +31,14 @@ const Login = ({ navigation, route}) => {
                     secureTextEntry={true}
                     onChangeText={text => setPassword(text)}
                 />
-                <Button style={style.button} mode="contained" onPress={() => login(email, password)}>Entrar</Button>
+                <Button style={style.button} mode="contained" onPress={async () => {
+                    try{
+                        await login(email, password, route.params.firebaseApp);
+                        route.params.setUserLoggedIn(true);
+                    }catch(err){
+                        alert(err)
+                    }
+                }}>Entrar</Button>
                 <Button style={style.button} onPress={() => navigation.navigate('Register')}>Registrar</Button>
             </View>
 }
