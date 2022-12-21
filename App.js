@@ -29,14 +29,13 @@ import {
 } from 'react-native-paper-dates'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDodZ2dh2l7qBrckukpXjSHW3a41Y2qC2E",
-  authDomain: "meu-pomodoro-7d0fb.firebaseapp.com",
-  databaseURL: "https://meu-pomodoro-7d0fb-default-rtdb.firebaseio.com",
-  projectId: "meu-pomodoro-7d0fb",
-  storageBucket: "meu-pomodoro-7d0fb.appspot.com",
-  messagingSenderId: "32516519284",
-  appId: "1:32516519284:web:6be5e2d541f16d255b2821",
-  measurementId: "G-P2HEVQJ38C"
+  apiKey: "AIzaSyDoRTeLHqqQmha9VLMLABGXKY3bL0dk1m4",
+  authDomain: "aplicativo-tarefas-28fda.firebaseapp.com",
+  projectId: "aplicativo-tarefas-28fda",
+  storageBucket: "aplicativo-tarefas-28fda.appspot.com",
+  messagingSenderId: "266240844586",
+  appId: "1:266240844586:web:e4bc9a0b1452c44813b453",
+  measurementId: "G-H2DNSNNTDE"
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
@@ -132,7 +131,6 @@ export default function App() {
                   }}  
                   initialParams={{
                     modeColor,
-                    setModeColor,
                     setUserLoggedIn,
                     firebaseApp
                   }}

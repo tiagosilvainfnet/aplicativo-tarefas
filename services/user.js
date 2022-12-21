@@ -7,7 +7,7 @@ import {
 import {
     getStorage as firebaseGetStorage,
     ref,
-    updateString,
+    uploadString,
     getDownloadURL
 } from 'firebase/storage'
 
@@ -30,7 +30,7 @@ const _updateProfile = async (firebaseApp, data) => {
     }
 
     try{
-        // updateProfile(auth.currentUser, data);
+        updateProfile(auth.currentUser, data);
         saveStorage('user', data);
     }catch(err){
         console.log("Err", err)
@@ -44,8 +44,7 @@ const saveImageToBase64ToUrl = async (fiebaseApp, prefix, imageB64) => {
     const storageRef = ref(storage, filename);
 
     try{
-        await updateString(storageRef, imageB64, "data_url");
-        console.log(filename)
+        await uploadString(storageRef, imageB64, "data_url");
         return filename;
     }catch(err){
         console.log(err)
@@ -53,11 +52,19 @@ const saveImageToBase64ToUrl = async (fiebaseApp, prefix, imageB64) => {
     }
 }   
 
+const getFile = async  (fiebaseApp, filename) => {
+    const storage = firebaseGetStorage(fiebaseApp);
+    const storageRef = ref(storage, filename);
+
+    return await getDownloadURL(storageRef);
+}
+
 const getUser = async () => {
     return await getStorage('user');
 }
 
 export {
     _updateProfile,
-    getUser
+    getUser,
+    getFile
 }

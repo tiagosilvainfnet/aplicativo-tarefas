@@ -1,30 +1,39 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import { StyleSheet, View, Dimensions, TouchableOpacity } from 'react-native';
 import { FAB, Button, TextInput, Avatar, Card, Snackbar } from 'react-native-paper';
-import { getUser, _updateProfile } from '../services/user';
+import { getUser, _updateProfile, getFile } from '../services/user';
 import { useTheme } from 'react-native-paper';
 import { logout } from '../services/auth';
 import { pickImage } from '../services/image';
 
 const Profile = ({ route }) => {
     const theme = useTheme();
+
     const [snackBarShow, setSnackBarShow] = useState(false);
     const [messageSnack, setMessageSnack] = useState("");
     
     const [email, setEmail] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [photoURL, setPhotoURL] = useState("");
+    const [photoURLShow, setPhotoURLShow] = useState("");
 
     const loadUser = async () => {
         const user = await getUser();
         setEmail(user.email)
         setDisplayName(user.displayName)
-        setPhotoURL(user.photoURL)
+        if(user.photoURL){
+            try{
+                setPhotoURLShow(await getFile(route.params.firebaseApp, user.photoURL))
+            }catch(err){
+
+            }
+        }
     }
 
     const uploadPhoto = async () => {
         const image = await pickImage();
         setPhotoURL(image);
+        setPhotoURLShow(image);
     }
 
     useEffect(() => {
@@ -36,18 +45,19 @@ const Profile = ({ route }) => {
                     ...style.box,
                     backgroundColor: theme.colors.bodyBackground
                 }}>
+
                 <Card style={style.card}>
                     <Avatar.Image 
                         style={style.avatar}
-                        size={150} source={{ uri: photoURL ? photoURL : require('../assets/user.png')}} />
-                    <FAB
+                        size={150} source={{ uri: photoURLShow ? photoURLShow : require('../assets/user.png')}} />
+                    {/* <FAB
                         icon="camera"
                         style={{
                             ...style.fab,
                             left: '-12.5%'
                         }}
-                        onPress={() => console.log('Pressed')}
-                    />
+                        onPress={openCamera}
+                    /> */}
                     <FAB
                         icon="folder-image"
                         style={{
@@ -101,6 +111,10 @@ const Profile = ({ route }) => {
 }
 
 const style = StyleSheet.create({
+    camera: {
+        position: 'absolute',
+        backgroundColor: "#333"
+    },
     fab: {
         position: 'absolute',
         bottom: 0,
